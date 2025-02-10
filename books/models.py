@@ -1,6 +1,4 @@
 from django.db import models
-from reviews.models import Review
-
 
 # Create your models here.
 
@@ -19,7 +17,6 @@ class Book(models.Model):
     length = models.IntegerField()
 
     author = models.ManyToManyField(Author, related_name="authored_books")
-    reviews = models.ManyToManyField(Review, related_name="reviewed_books")
 
     @property
     def average_rating(self):
