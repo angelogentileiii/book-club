@@ -3,6 +3,8 @@ from reviews.models import Review
 
 
 # Create your models here.
+
+
 class Author(models.Model):
     name = models.CharField(max_length=255)
     bio = models.TextField(blank=True)
@@ -12,7 +14,7 @@ class Book(models.Model):
     title = models.CharField(max_length=255)
     isbn = models.CharField(max_length=13, unique=True, blank=True, null=True)
     published_date = models.DateField(blank=True, null=True)
-    description = models.TextField(blank=True)
+    description = models.TextField(max_length=500, blank=True)
     genres = models.CharField(max_length=25)
     length = models.IntegerField()
 
