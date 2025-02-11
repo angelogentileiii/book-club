@@ -1,7 +1,4 @@
 from django.db import models
-from books.models import Book
-from users.models import UserProfile
-
 from django.core.exceptions import ValidationError
 
 # Create your models here.
@@ -15,7 +12,11 @@ class BookClub(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=500, blank=True)
     current_book = models.ForeignKey(
-        Book, on_delete=models.SET_NULL, null=True, blank=True, related_name="bookclubs"
+        "books.Book",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="bookclubs",
     )
     visibility = models.CharField(
         max_length=25, choices=VISIBILITY_CHOICES, default=PUBLIC
@@ -31,10 +32,10 @@ class Membership(models.Model):
     ROLES = [(ADMIN, "Admin"), (MEMBER, "Member")]
 
     user = models.ForeignKey(
-        UserProfile, on_delete=models.CASCADE, related_name="memberships"
+        "users.UserProfile", on_delete=models.CASCADE, related_name="memberships"
     )
     bookclub = models.ForeignKey(
-        BookClub, on_delete=models.CASCADE, related_name="members"
+        "BookClub", on_delete=models.CASCADE, related_name="members"
     )
     joined_at = models.DateTimeField(auto_now_add=True)
     role = models.CharField(max_length=10, choices=ROLES, default=MEMBER)

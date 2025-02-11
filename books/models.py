@@ -16,7 +16,7 @@ class Book(models.Model):
     genres = models.CharField(max_length=25)
     length = models.IntegerField()
 
-    author = models.ManyToManyField(Author, related_name="authored_books")
+    author = models.ManyToManyField("Author", related_name="authored_books")
 
     @property
     def average_rating(self):

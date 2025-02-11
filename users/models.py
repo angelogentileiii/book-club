@@ -1,6 +1,5 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-from books.models import Book
 
 
 # Create your models here.
@@ -14,7 +13,7 @@ class UserProfile(models.Model):
     phone_number = PhoneNumberField(blank=True)
 
     favorited_books = models.ManyToManyField(
-        Book, related_name="favorited_by", blank=True
+        "books.Book", related_name="favorited_by", blank=True
     )
     friends = models.ManyToManyField("self", symmetrical=True, blank=True)
 
