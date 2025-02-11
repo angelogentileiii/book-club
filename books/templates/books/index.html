@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}BOOKS{% endblock title %}
+
+{% block body %}
+    <h1>BOOKS</h1>
+    {% for book in books %}
+        <div>
+            <h3>{{ book.title }}</h3>
+            <p>Author: {{ book.author_name.0|default:"Unknown" }}</p>
+            <p>First Published: {{ book.first_publish_year|default:"N/A" }}</p>
+        </div>
+    {% empty %}
+        <h1>No books Found</h1>
+    {% endfor %}
+{% endblock body %}
