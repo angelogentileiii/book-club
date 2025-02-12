@@ -4,7 +4,16 @@ import re
 register = template.Library()
 
 
+# Custom Tag to Titlecase the input value
 @register.filter(name="titlecase")
 def titlecase(value):
-    """Capitalizes the first letter of each word, even after hyphens and spaces."""
-    return re.sub(r"\b[a-zA-Z]", lambda match: match.group(0).upper(), value)
+    if not isinstance(value, str):
+        return value
+
+    value = value.lower()
+
+    # Capitalize the first letter of each word after spaces, hyphens, but not after apostrophes
+    #   - (?<!'\w) is the negative look behind to check for anything behind the apostrophe which should not be capitalized
+    return re.sub(
+        r"\b[a-zA-Z](?<!'\w)", lambda match: match.group(0).upper(), value.lower()
+    )

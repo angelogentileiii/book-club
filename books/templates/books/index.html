@@ -1,15 +1,22 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 
 {% block title %}BOOKS{% endblock title %}
 
 {% block body %}
     <h1>BOOKS</h1>
     {% for book in books %}
-        <div>
-            <h3>{{ book.title }}</h3>
-            <p>Author: {{ book.author_name.0|default:"Unknown" }}</p>
-            <p>First Published: {{ book.first_publish_year|default:"N/A" }}</p>
-        </div>
+        {% with book.volumeInfo as info %}
+            <div>
+                <h3>{{ info.title|titlecase }}</h3>
+                {% if info.imageLinks and info.imageLinks.thumbnail %}
+                    <img src="{{ info.imageLinks.thumbnail }}" alt="{{ info.title }}" />
+                {% endif %}
+                <p>Written By: {{ info.authors|join:", "|default:"Unknown" }}</p>
+                <p>First Published: {{ info.publishedDate|default:"N/A" }}</p>
+                <p>{{ info.description }}</p>
+            </div>
+        {% endwith %}
     {% empty %}
         <h1>No books Found</h1>
     {% endfor %}

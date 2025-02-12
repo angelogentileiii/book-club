@@ -8,11 +8,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{% block title %}{% endblock %}</title>
         {% block css_files %}{% endblock %}
+        <link rel="stylesheet" href="{% static "app.css" %}">
     </head>
     <body>
         <header id="main-navigation">
             <nav>
-                <a href="{% url 'home-page' %}">BookClub (logo image)</a>
+                <img id="logo-image" src="{% static "logos/Logo-BW-Small.png" %}" alt="BookClub Logo" />
                 <label for="browse">Browse Books</label>
                 <select id="browse">
                     <option value="recommendations">Recommendations</option>
