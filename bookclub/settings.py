@@ -37,20 +37,21 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "users",
-    "books",
-    "bookclubs",
-    "reviews",
     "analytics",
-    "notifications",
+    "bookclubs",
+    "books",
+    "chat",
     "custom_tags",
+    "discussions",
+    "notifications",
+    "users",
+    "phonenumber_field",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "phonenumber_field",
 ]
 
 MIDDLEWARE = [
