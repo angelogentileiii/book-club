@@ -26,6 +26,17 @@ class BookClub(models.Model):
         return f"{self.name} ({self.visibility})"
 
 
+class PastBook(models.Model):
+    bookclub = models.ForeignKey(
+        "BookClub", on_delete=models.CASCADE, related_name="past_books"
+    )
+    book = models.ForeignKey(
+        "books.Book", on_delete=models.CASCADE, realted_name="past_clubs"
+    )
+    completion_date = models.DateField()
+    rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+
+
 class Membership(models.Model):
     ADMIN = "admin"
     MEMBER = "member"
