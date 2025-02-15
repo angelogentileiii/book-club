@@ -12,6 +12,10 @@ class DiscussionQuestion(models.Model):
     )
     asked_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = "Discussion Question"
+        verbose_name_plural = "Discussion Questions"
+
     def __str__(self):
         return f"Question for {self.past_book.book.title}: {self.question[:25]}"
 

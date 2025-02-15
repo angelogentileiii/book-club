@@ -28,8 +28,12 @@ class ChatRoom(models.Model):
         related_name="chatrooms",
     )
 
-    participants = models.ManyToManyField("users.UserProfile", related_name="chatrooms")
+    members = models.ManyToManyField("users.UserProfile", related_name="chatrooms")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Chat Room"
+        verbose_name_plural = "Chat Rooms"
 
     def __str__(self):
         return self.name if self.name else f"Chat ({self.chat_type})"

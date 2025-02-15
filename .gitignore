@@ -1,3 +1,16 @@
+# Ignore environment variable file
 .env
-*.zip
+
+# Ignore virtual env
 /bookclub-venv
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore any zip files
+*.zip
+
+# Ignore SQLite and migrations cache
+db.sqlite3

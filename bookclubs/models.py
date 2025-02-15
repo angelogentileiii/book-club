@@ -26,6 +26,10 @@ class BookClub(models.Model):
         max_length=25, choices=VISIBILITY_CHOICES, default=PUBLIC
     )
 
+    class Meta:
+        verbose_name = "Book Club"  # Singular name
+        verbose_name_plural = "Book Clubs"  # Plural name
+
     def __str__(self):
         return f"{self.name} ({self.visibility})"
 

@@ -17,5 +17,9 @@ class UserProfile(models.Model):
     )
     friends = models.ManyToManyField("self", symmetrical=True, blank=True)
 
+    class Meta:
+        verbose_name = "User Profile"
+        verbose_name_plural = "User Profiles"
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
