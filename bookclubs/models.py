@@ -26,12 +26,37 @@ class BookClub(models.Model):
         max_length=25, choices=VISIBILITY_CHOICES, default=PUBLIC
     )
 
+    creator = models.ForeignKey(
+        "users.UserProfile",
+        on_delete=models.SET_NULL,
+        related_name="bookclubs_created",
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         verbose_name = "Book Club"  # Singular name
         verbose_name_plural = "Book Clubs"  # Plural name
 
+    def save(self, *args, **kwargs):
+        is_new_instance = not self.pk
+
+        if is_new_instance and self.creator:
+            super().save(*args, **kwargs)  # Save the BookClub first (before Membership)
+
+            # Check if the creator already has a membership before creating a new one
+            if not Membership.objects.filter(user=self.creator, bookclub=self).exists():
+                # Create a Membership with the ADMIN role for the creator if none exists
+                Membership.objects.create(
+                    user=self.creator,
+                    bookclub=self,
+                    role=Membership.ADMIN,
+                )
+        else:
+            super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.name} ({self.visibility})"
+        return f"{self.name}"
 
 
 # Class for storing all of the information from a PastBook --> Upon completion or change of current book
@@ -82,12 +107,18 @@ class Membership(models.Model):
             .exists()
         )
 
-    # Ensures that we check for a currently existing admin to the bookclub before saving, we cannot save a Member first
+    # Ensures that we check for a currently existing admin to the bookclub before saving
+    #   - If the BookClub has no members or the role is MEMBER but no ADMIN exists, make the user an ADMIN
     def save(self, *args, **kwargs):
-        if self.role == Membership.MEMBER or not self.has_admin():
+        if not self.pk and self.bookclub.creator == self.user:
+            self.role = Membership.ADMIN
+
+        # Ensure there is at least one admin before saving if changing to 'Member'
+        if self.role == Membership.MEMBER and not self.has_admin():
             raise ValidationError(
                 "Each book club must have at least one admin. Please set a new admin."
             )
+
         super().save(*args, **kwargs)
 
     # Ensures that there will be an admin remaining before the role can be deleted (member removed from BookClub or changed to member role)

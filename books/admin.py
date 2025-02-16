@@ -6,7 +6,22 @@ from .models import Book, Author, Review
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "published_date", "isbn", "length")
+    list_display = (
+        "title",
+        "get_author",
+        "published_date",
+        "isbn",
+        "length",
+        "average_rating",
+    )
+
+    readonly_fields = ("average_rating",)
+
+    def get_author(self, obj):
+        authors = obj.author.all()
+        return ", ".join(author.name for author in authors)
+
+    get_author.short_description = "Author(s)"
 
 
 @admin.register(Author)

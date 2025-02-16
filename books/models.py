@@ -9,6 +9,9 @@ class Author(models.Model):
     name = models.CharField(max_length=255)
     bio = models.TextField(blank=True)
 
+    def __str__(self):
+        return self.name
+
 
 # Class for our Books in our database
 class Book(models.Model):
@@ -50,7 +53,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 class Review(models.Model):
     user = models.ForeignKey("users.UserProfile", on_delete=models.CASCADE)
-    book = models.ForeignKey("Book", on_delete=models.CASCADE)
+    book = models.ForeignKey("Book", on_delete=models.CASCADE, related_name="reviews")
     rating = models.DecimalField(
         max_digits=3,  # Allow up to 3 digits in total (e.g., 5.0 or 3.8)
         decimal_places=1,  # One decimal place for tenths (e.g., 4.7)
