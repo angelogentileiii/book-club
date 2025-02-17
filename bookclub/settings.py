@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "bookclubs",
     "books",
     "chat",
+    "core",
     "custom_tags",
     "discussions",
     "notifications",
@@ -139,3 +140,10 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",  # In-memory cache
+        "TIMEOUT": 300,  # Default timeout for cache (5 minutes)
+    }
+}

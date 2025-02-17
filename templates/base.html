@@ -13,7 +13,9 @@
     <body>
         <header id="main-navigation">
             <nav>
-                <img id="logo-image" src="{% static "logos/Logo-BW-Small.png" %}" alt="BookClub Logo" />
+                <a href="{% url "home-page" %}">
+                    <img id="logo-image" src="{% static "logos/Logo-BW-Small.png" %}" alt="BookClub Logo" />
+                </a>
                 <label for="browse">Browse Books</label>
                 <select id="browse">
                     <option value="recommendations">Recommendations</option>
@@ -26,7 +28,7 @@
                     </optgroup>
                     <option value=""></option>
                 </select>
-                <a href="">Clubs</a>
+                <a href="https://www.google.com">Clubs</a>
                 <input type="text" placeholder="Search..">
                 <a href="">Profile</a>
                 <a href="">Favorites</a>
