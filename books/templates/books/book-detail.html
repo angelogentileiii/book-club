@@ -24,15 +24,12 @@
             
             <div class="book-description">
                 <h2>Description:</h2>
-                <p>{{ book_info.description|default:"No description available" }}</p>
+                <p>{{ book_info.description|default:"No description available"|safe }}</p>
             </div>
         {% endwith %}
         
         <div class="book-links">
             <p><strong>More Info:</strong> <a href="{{ book_info.infoLink }}" target="_blank">View on Google Books</a></p>
-            {% if book_details.saleInfo.buyLink %}
-                <p><strong>Buy Now:</strong> <a href="{{ book_details.saleInfo.buyLink }}" target="_blank">Purchase the book</a></p>
-            {% endif %}
         </div>
     </div>
 {% endblock body %}

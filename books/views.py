@@ -4,6 +4,7 @@ from django.views import View
 from os import getenv
 
 import requests
+import json
 
 
 # Create your views here.
@@ -28,5 +29,7 @@ class BookDetailView(View):
                 request.session[f"book_{book_id}"] = book_details
             else:
                 book_details = {"error": f"Error fetching details for book {book_id}"}
+
+        print(json.dumps(book_details["volumeInfo"]["description"], indent=2))
 
         return render(request, self.template_name, {"book_details": book_details})
