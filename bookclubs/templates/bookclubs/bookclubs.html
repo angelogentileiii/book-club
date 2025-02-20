@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}BOOK CLUBS{% endblock title %}
+
+{% block body %}
+    <section id="all-posts">
+        <ul>
+            {% for bookclub in bookclubs %}
+                {% include "bookclubs/includes/bookclub-card.html" %}
+            {% endfor %}
+        </ul>
+    </section>
+
+{% endblock body %}
