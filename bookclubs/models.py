@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 # Create your models here.
@@ -53,6 +54,15 @@ class BookClub(models.Model):
                     role=Membership.ADMIN,
                 )
         else:
+            existing_bookclub = BookClub.objects.get(pk=self.pk)
+            if self.current_book != existing_bookclub.current_book:
+                # If there is an existing current book, create a PastBook entry
+                if existing_bookclub.current_book:
+                    PastBook.objects.create(
+                        bookclub=self,
+                        book=existing_bookclub.current_book,
+                        completion_date=timezone.now().date(),  # Set the completion date as today
+                    )
             super().save(*args, **kwargs)
 
     def __str__(self):

@@ -1,0 +1,40 @@
+<li>
+    <article class="bookclub-{{ bookclub.name }}">
+        <div class="book-club__content">
+            {% if bookclub.visibility == "public" %}
+                <section class="bookclub-info">
+                    <h3>{{ bookclub.name }}</h3>
+                    <p>Members: {{ bookclub.members.count }}</p>
+                    <ul>
+                        {% for member in bookclub.members.all %}
+                            <li> {{ member.user }}</li>
+                        {% endfor %}
+                    </ul>
+                    <p>Current Book: 
+                        {% if bookclub.current_book %}
+                            {{ bookclub.current_book }}
+                        {% else %}
+                            No current book selected
+                        {% endif %}
+                    </p>
+
+                    <section class="past-books">
+                        <ul>
+                            <p>Past Books:</p>
+                            {% for past_book in bookclub.past_books.all %}
+                                <li>
+                                    <p>{{ past_book.book }}</p>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                </section>
+            {% else %}
+                <section class="bookclub-info">
+                    <h3>{{ bookclub.name }}</h3>
+                    <p>{{ bookclub.visibility}}</p>
+                </section>
+            {% endif %}
+        </div>
+    </article>
+</li>
