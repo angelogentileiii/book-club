@@ -18,7 +18,7 @@ class BookDetailView(View):
         book_details = request.session.get(f"book_{book_id}")
 
         if not book_details:
-            # If not cached in session, make a fresh request
+            # If not cached in session, make a fresh request for the book
             url = f"https://www.googleapis.com/books/v1/volumes/{book_id}"
             params = {"key": getenv("GOOGLE_API_KEY")}
             response = requests.get(url, params=params)
@@ -30,6 +30,6 @@ class BookDetailView(View):
             else:
                 book_details = {"error": f"Error fetching details for book {book_id}"}
 
-        print(json.dumps(book_details["volumeInfo"]["description"], indent=2))
+        # print(json.dumps(book_details["volumeInfo"]["description"], indent=2))
 
         return render(request, self.template_name, {"book_details": book_details})

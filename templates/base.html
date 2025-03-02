@@ -29,7 +29,18 @@
                     <option value=""></option>
                 </select>
                 <a href="{% url "book-clubs" %}">Clubs</a>
-                <input type="text" placeholder="Search..">
+                <form action="{% url 'search-books' %}" method="get">
+                    <input type="text" name="q" placeholder="Search.." value="{{ request.GET.q }}">
+
+                    <label for="search_type">Search by:</label>
+                        <select name="search_type" id="search_type">
+                            <option value="title" {% if request.GET.search_type == 'title' %}selected{% endif %}>Title</option>
+                            <option value="author" {% if request.GET.search_type == 'author' %}selected{% endif %}>Author</option>
+                            <option value="isbn" {% if request.GET.search_type == 'isbn' %}selected{% endif %}>ISBN</option>
+                        </select>
+                    
+                    <button type="submit">Search</button>
+                </form>
                 <a href="">Profile</a>
                 <a href="">Favorites</a>
             </nav>
