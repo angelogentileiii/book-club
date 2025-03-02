@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}BOOKS{% endblock title %}
+{% block title %}Search Results{% endblock title %}
 
 {% block body %}
-    <h1>BOOKS</h1>
-    {% for genre, books in books_by_genre.items%}
-        <div>
-            {% if books %}
-            <h1>New in {{ genre }}</h1>
-                {% for book in books %}
-                    {% include 'core/includes/book-card.html' %}
-                {% endfor %}
-            {% endif %}
-        {% empty %}
-            <h1>No books Found</h1>
-    {% endfor %}
+    <h1>Search Results for: "{{ query }}"</h1>
+
+    {% if books %}
+        <ul>
+            {% for book in books %}
+                {% include 'core/includes/book-card.html' %}
+            {% endfor %}
+        </ul>
+
+    {% else %}
+        <p>No results found for your search.</p>
+    
+    {% endif %}
 
 {% endblock body %}
 

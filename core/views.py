@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views import View
+from django.views.generic import ListView
 from django.core.cache import cache
 from django.utils.text import Truncator
 
@@ -10,17 +11,19 @@ import requests
 import json
 
 fields = (
-    "kind,totalItems,items(id,selfLink,volumeInfo/title, volumeInfo/subtitle, volumeInfo/authors, volumeInfo/publisher, volumeInfo/publishedDate, volumeInfo/description, volumeInfo/industryIdentifiers, volumeInfo/categories, volumeInfo/imageLinks, volumeInfo/previewLink)",
+    "kind,totalItems,items(id,selfLink,volumeInfo/title, volumeInfo/subtitle, volumeInfo/authors, volumeInfo/publisher, volumeInfo/publishedDate, volumeInfo/description, volumeInfo/industryIdentifiers, volumeInfo/categories, volumeInfo/imageLinks, volumeInfo/previewLink, volumeInfo/infoLink)",
 )
 
 params = {
     "key": getenv("GOOGLE_API_KEY"),
     "maxResults": 10,
-    "orderBy": "newest",
     "printType": "books",
     "langRestrict": "en",
     "fields": fields,
+    "projection": "full",
 }
+
+url = f"https://www.googleapis.com/books/v1/volumes"
 
 
 # Create your views here.
@@ -43,8 +46,8 @@ class HomePageView(View):
             genre_books = cache.get(cache_key)
 
             if not genre_books:
-                url = f"https://www.googleapis.com/books/v1/volumes"
                 params["q"] = f"subject:{genre}"
+                params["orderBy"] = "newest"
 
                 response = requests.get(url, params=params)
 
@@ -53,14 +56,9 @@ class HomePageView(View):
                     all_books = data.get("items", [])
                     filtered_books = newest_books_filter(all_books)
 
-                    genre_books = filtered_books[:2]  # Limit to first 10 books
+                    genre_books = filtered_books[:2]
 
-                    for book in genre_books:
-                        description = book["volumeInfo"].get("description", "")
-                        truncated_description = Truncator(description).words(75)
-                        book["volumeInfo"][
-                            "truncated_description"
-                        ] = truncated_description
+                    truncate_description(genre_books)
 
                     cache.set(
                         cache_key, genre_books, timeout=3600
@@ -71,15 +69,78 @@ class HomePageView(View):
                             "title": f"Error: {response.status_code} - Unable to fetch books for {genre}."
                         }
                     ]
+
                     print(f"Error Code: {response.status_code} - {response.text}")
 
             if "+" in genre:
                 genre = genre.replace("+", " ")
 
             books_by_genre[genre] = genre_books
-            print(json.dumps(books_by_genre, indent=2))
+
+            # print(json.dumps(books_by_genre, indent=2))
 
         return render(request, self.template_name, {"books_by_genre": books_by_genre})
+
+
+class SearchBooksView(ListView):
+    template_name = "core/search.html"
+    context_object_name = "books"
+
+    def get_queryset(self):
+        query = self.request.GET.get("q", "")
+        search_type = self.request.GET.get("search_type", "title")
+        searched_books = []
+
+        if query:
+            match search_type:
+                case "author":
+                    query = f"inauthor:{query}"
+                case "title":
+                    query = f"intitle:{query}"
+                case "isbn":
+                    query = f"isbn:{query}"
+                case _:
+                    query = f"intitle:{query}"
+
+            params["q"] = query
+            params["orderBy"] = "relevance"
+            response = requests.get(url, params)
+
+            print(url)
+            print(params["q"])
+
+            if response.status_code == 200:
+                data = response.json()
+                searched_books = data.get("items", [])
+
+                searched_books = [
+                    book
+                    for book in searched_books
+                    if book.get("volumeInfo")
+                    and book["volumeInfo"].get("title")
+                    and book["volumeInfo"].get("authors")
+                    and book["volumeInfo"].get("publishedDate")
+                    and book["volumeInfo"].get("imageLinks")
+                    and book["volumeInfo"].get("description")
+                ]
+
+                truncate_description(searched_books)
+
+        return searched_books
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["query"] = self.request.GET.get("q", "")
+        return context
+
+
+def truncate_description(books):
+    for book in books:
+        description = book["volumeInfo"].get("description", "")
+        truncated_description = Truncator(description).words(75)
+        book["volumeInfo"]["truncated_description"] = truncated_description
+
+    return books
 
 
 def newest_books_filter(books):

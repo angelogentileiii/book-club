@@ -26,10 +26,10 @@
                 <h2>Description:</h2>
                 <p>{{ book_info.description|default:"No description available"|safe }}</p>
             </div>
+    
+            <div class="book-links">
+                <p><strong>More Info:</strong> <a href="{{ book_info.infoLink }}" target="_blank">View on Google Books</a></p>
+            </div>
         {% endwith %}
-        
-        <div class="book-links">
-            <p><strong>More Info:</strong> <a href="{{ book_info.infoLink }}" target="_blank">View on Google Books</a></p>
-        </div>
     </div>
 {% endblock body %}
