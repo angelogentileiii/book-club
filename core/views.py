@@ -77,7 +77,7 @@ class HomePageView(View):
 
             books_by_genre[genre] = genre_books
 
-            # print(json.dumps(books_by_genre, indent=2))
+            print(json.dumps(books_by_genre, indent=2))
 
         return render(request, self.template_name, {"books_by_genre": books_by_genre})
 
@@ -106,13 +106,11 @@ class SearchBooksView(ListView):
             params["orderBy"] = "relevance"
             response = requests.get(url, params)
 
-            print(url)
-            print(params["q"])
-
             if response.status_code == 200:
                 data = response.json()
                 searched_books = data.get("items", [])
 
+                # Ensure that results only include populated data --> Necessary items are not missing
                 searched_books = [
                     book
                     for book in searched_books
@@ -124,6 +122,7 @@ class SearchBooksView(ListView):
                     and book["volumeInfo"].get("description")
                 ]
 
+                # Allow for description preview
                 truncate_description(searched_books)
 
         return searched_books
@@ -137,8 +136,16 @@ class SearchBooksView(ListView):
 def truncate_description(books):
     for book in books:
         description = book["volumeInfo"].get("description", "")
-        truncated_description = Truncator(description).words(75)
-        book["volumeInfo"]["truncated_description"] = truncated_description
+
+        word_count = sum(1 for word in description.split() if word)
+
+        # Check if description length is greater than 65 characters
+        if word_count > 65:
+            truncated_description = Truncator(description).words(65)
+            book["volumeInfo"]["truncated_description"] = truncated_description
+            book["volumeInfo"]["is_truncated"] = True  # Flag to indicate truncation
+        else:
+            book["volumeInfo"]["is_truncated"] = False  # No truncation needed
 
     return books
 
@@ -163,43 +170,3 @@ def newest_books_filter(books):
             pass  # Ignore invalid date formats
 
     return filtered_books
-
-
-#########################################################################################################################################
-# ATTEMPT TO WORK WITH ISBN API --> No manner to retrieve recent publications
-
-# ISBN_KEY = getenv("ISBN_API_KEY")
-
-# url = "https://api2.isbndb.com/search/books"
-# headers = {"accept": "application/json", "Authorization": ISBN_KEY}
-
-# params = {
-#     "subject": "fiction",
-#     "page": 1,
-#     "pageSize": 35,
-# }
-
-# response = requests.get(url, headers=headers, params=params)
-
-# # If the response is successful, process the data
-# if response.status_code == 200:
-#     books = response.json()
-
-#     print(json.dumps(books, indent=2))
-
-#     # Check if the 'data' field is in the response and process the books
-#     fiction_books = books.get("data", [])
-
-#     if fiction_books:
-#         fiction_books = fiction_books[:5]
-
-#     if not fiction_books:
-#         fiction_books = [{"title": "No books found in this genre."}]
-# else:
-#     fiction_books = [
-#         {"title": f"Error: {response.status_code} - Unable to fetch books."}
-#     ]
-#     print(f"Error Code: {response.status_code} - {response.text}")
-
-# # Return the context with books (or error message)
-# return render(request, self.template_name, {"fiction_books": fiction_books})

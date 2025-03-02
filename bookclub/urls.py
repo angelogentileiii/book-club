@@ -23,4 +23,5 @@ urlpatterns = [
     path("", include("core.urls")),
     path("books/", include("books.urls")),
     path("bookclubs/", include("bookclubs.urls")),
+    path("users/", include("users.urls")),
 ]

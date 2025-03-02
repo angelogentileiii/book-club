@@ -3,7 +3,7 @@
 {% with book.volumeInfo as info %}
     <div>
         <h3>{{ info.title|titlecase }}</h3>
-        <a href="{% url 'book-detail' book.id %}">
+        <a href="{% url 'book_detail' book.id %}">
             {% if info.imageLinks and info.imageLinks.thumbnail %}
                 <img src="{{ info.imageLinks.thumbnail }}" alt="{{ info.title }}" />
             {% endif %}
@@ -12,10 +12,12 @@
         <p>First Published: {{ info.publishedDate|default:"N/A" }}</p>
         
         <p>
-            <span class="trunc-description-text" id="trunc-description-{{ book.id }}">
-                {{ info.truncated_description|default:"No description available"|safe }}
-            </span>
-            {% if info.description %}
+            {% if info.is_truncated %}
+                <!-- Show truncated description with "Read More" link -->
+                <span class="trunc-description-text" id="trunc-description-{{ book.id }}">
+                    {{ info.truncated_description|default:"No description available"|safe }}
+                </span>
+
                 <!-- Full description, hidden by default -->
                 <span class="description" id="description-{{ book.id }}" style="display:none;">
                     {{ info.description|default:"No description available"|safe }}
@@ -24,6 +26,11 @@
                 <!-- The ellipsis will expand the description -->
                 <span class="expand-description" id="expand-{{ book.id }}">
                     <a href="javascript:void(0);" onclick="expandDescription('{{ book.id }}')">[Read More]</a>
+                </span>
+            {% else %}
+                <!-- Just show the full description if it's not truncated -->
+                <span class="description" id="description-{{ book.id }}">
+                    {{ info.description|default:"No description available"|safe }}
                 </span>
             {% endif %}
         </p>

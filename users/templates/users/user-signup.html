@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Sign Up
+{% endblock title %}
+
+{% block body %}
+    <form action="{% url "sign_up" %}" method="POST">
+        {% csrf_token %}
+        {% for form_field in signup_form %}
+            <div class="form-control {% if form_field.errors %}invalid{% endif %}">
+                {{ form_field.label_tag}}
+                {{ form_field }}
+                {% for error in form_field.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <button>Sign Up</button>
+    </form>
+
+{% endblock body %}

@@ -10,10 +10,11 @@
         {% block css_files %}{% endblock %}
         <link rel="stylesheet" href="{% static "app.css" %}">
     </head>
+
     <body>
         <header id="main-navigation">
             <nav>
-                <a href="{% url "home-page" %}">
+                <a href="{% url "home_page" %}">
                     <img id="logo-image" src="{% static "logos/Logo-BW-Small.png" %}" alt="BookClub Logo" />
                 </a>
                 <label for="browse">Browse Books</label>
@@ -28,8 +29,8 @@
                     </optgroup>
                     <option value=""></option>
                 </select>
-                <a href="{% url "book-clubs" %}">Clubs</a>
-                <form action="{% url 'search-books' %}" method="get">
+                <a href="{% url "book_clubs" %}">Clubs</a>
+                <form action="{% url 'search_books' %}" method="get">
                     <input type="text" name="q" placeholder="Search.." value="{{ request.GET.q }}">
 
                     <label for="search_type">Search by:</label>
@@ -41,13 +42,17 @@
                     
                     <button type="submit">Search</button>
                 </form>
-                <a href="">Profile</a>
+                <a href="{% url "sign_up" %}">Profile</a>
                 <a href="">Favorites</a>
             </nav>
         </header>
+
         <main>
             {% block body %}{% endblock %}
         </main>
-        {% block add_js %}{% endblock add_js %}
+
+        {% block add_js %}
+            <script src="{% static 'js/expand-description.js' %}"></script>
+        {% endblock add_js %}
     </body>
 </html>
